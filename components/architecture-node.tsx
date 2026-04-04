@@ -30,11 +30,10 @@ export function ArchitectureNode({
         },
       }}
       className={cn(
-        "flex flex-col items-center gap-2 rounded-2xl border border-border-glass bg-bg-glass p-4 backdrop-blur-xl",
-        "border-t border-t-white/[0.08]",
+        "glass-card flex flex-col items-center gap-2 p-4",
         isCenter
           ? "animate-glow-pulse z-10 border-apex-accent/30 p-6"
-          : "transition-all duration-500 hover:border-apex-accent/20 hover:shadow-[0_0_40px_oklch(70%_0.25_300_/_0.12)]",
+          : "transition-all duration-500 hover:border-apex-accent/20",
         className
       )}
     >
@@ -49,7 +48,7 @@ export function ArchitectureNode({
       <span
         className={cn(
           "font-display font-semibold tracking-tight",
-          isCenter ? "text-lg text-text-primary" : "text-sm text-text-primary"
+          isCenter ? "text-lg text-white" : "text-sm text-white"
         )}
       >
         {label}

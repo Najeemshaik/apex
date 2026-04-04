@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+
 import type { ArchitectureNodeData } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -55,6 +55,7 @@ export function Orbit({
 }) {
   const [mounted, setMounted] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [centerActive, setCenterActive] = useState(false);
   const [items, setItems] = useState<NodeState[]>(() =>
     nodes.map((data, i) => ({
       data,
@@ -98,12 +99,11 @@ export function Orbit({
     return () => cancelAnimationFrame(rafRef.current);
   }, [tick]);
 
-  const CIcon = centerNode.icon;
-
   const cx = size.w * 0.5;
   const cy = size.h * 0.46;
   const rx = size.w * 0.42;
   const ry = size.h * 0.28;
+  const minDim = Math.min(size.w, size.h);
 
   const sorted = [...items].sort(
     (a, b) =>
@@ -208,44 +208,62 @@ export function Orbit({
             );
           })}
 
-          {/* Center brain — pointer-events-none so nodes behind it are hoverable */}
+          {/* Center brain — interactive */}
           <div
-            className="pointer-events-none absolute"
+            className="absolute cursor-pointer"
             style={{
               left: cx,
               top: cy,
               transform: "translate(-50%,-50%)",
               zIndex: 15,
             }}
+            onMouseEnter={() => setCenterActive(true)}
+            onMouseLeave={() => setCenterActive(false)}
           >
+            {/* Ambient glow behind */}
             <div
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
               style={{
-                width: Math.min(size.w, size.h) * 0.35,
-                height: Math.min(size.w, size.h) * 0.35,
+                width: minDim * 0.35,
+                height: minDim * 0.35,
                 background:
                   "radial-gradient(circle, rgba(124,58,237,0.3) 0%, rgba(124,58,237,0.05) 50%, transparent 70%)",
+                transform: `scale(${centerActive ? 1.15 : 1})`,
+                opacity: centerActive ? 0.85 : 0.7,
+                transition: "transform 0.8s cubic-bezier(0.22,1,0.36,1), opacity 0.8s cubic-bezier(0.22,1,0.36,1)",
               }}
             />
+
+            {/* Core circle */}
             <div
-              className="animate-glow-pulse relative flex flex-col items-center justify-center rounded-full border border-white/[0.12] backdrop-blur-2xl"
+              className="animate-glow-pulse relative flex items-center justify-center rounded-full backdrop-blur-2xl"
               style={{
-                width: Math.min(size.w, size.h) * 0.18,
-                height: Math.min(size.w, size.h) * 0.18,
+                width: minDim * 0.2,
+                height: minDim * 0.2,
                 background:
-                  "radial-gradient(circle at 35% 30%, rgba(168,85,247,0.15) 0%, rgba(124,58,237,0.06) 40%, rgba(10,10,20,0.7) 100%)",
+                  "radial-gradient(circle at 40% 35%, rgba(168,85,247,0.18) 0%, rgba(124,58,237,0.06) 40%, rgba(8,8,16,0.8) 100%)",
                 boxShadow:
-                  "0 0 60px rgba(124,58,237,0.35), 0 0 120px rgba(124,58,237,0.1), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 0 30px rgba(124,58,237,0.08)",
+                  "0 0 60px rgba(124,58,237,0.35), 0 0 120px rgba(124,58,237,0.1), inset 0 0 30px rgba(124,58,237,0.08)",
+                transform: `scale(${centerActive ? 1.05 : 1})`,
+                transition: "transform 0.8s cubic-bezier(0.22,1,0.36,1)",
               }}
             >
-              <CIcon
-                className="text-apex-bright"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 32 32"
+                fill="none"
                 style={{
-                  width: Math.min(size.w, size.h) * 0.065,
-                  height: Math.min(size.w, size.h) * 0.065,
+                  width: minDim * 0.12,
+                  height: minDim * 0.12,
                 }}
-              />
-              <span className="mt-2 text-sm font-bold tracking-wider text-white">
+              >
+                <path d="M16 6L7 26h4.5l1.8-4h5.4l1.8 4H25L16 6zm0 7.5L19 22h-6l3-8.5z" fill="#C084FC" />
+              </svg>
+            </div>
+
+            {/* Label below */}
+            <div className="mt-3 flex justify-center">
+              <span className="whitespace-nowrap rounded-full border border-apex-accent/20 bg-black/60 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.15em] text-apex-bright/80 backdrop-blur-xl">
                 {centerNode.label}
               </span>
             </div>
@@ -277,10 +295,6 @@ export function Orbit({
   );
 }
 
-/*
-  OrbitNode: big icon + label beneath it.
-  On hover: card expands below with description.
-*/
 function OrbitNode({
   node,
   cx,
@@ -305,7 +319,6 @@ function OrbitNode({
   const z = Math.round(d01 * 18);
   const opacity = 0.5 + d01 * 0.5;
   const Icon = node.data.icon;
-  const iconSize = 28;
 
   return (
     <div
@@ -321,66 +334,40 @@ function OrbitNode({
       onMouseEnter={() => onHover(node.data.id)}
       onMouseLeave={onLeave}
     >
-      {/* Icon circle + label */}
-      <div className="flex flex-col items-center">
-        <div
-          className={cn(
-            "flex items-center justify-center rounded-2xl border backdrop-blur-xl transition-all duration-300",
-            hovered
-              ? "border-apex-accent/50 bg-apex-accent/20"
-              : "border-white/[0.1] bg-white/[0.04]"
-          )}
-          style={{
-            width: iconSize * 2.2,
-            height: iconSize * 2.2,
-            boxShadow: hovered
-              ? "0 0 30px rgba(124,58,237,0.5), 0 0 60px rgba(124,58,237,0.15)"
-              : "0 0 15px rgba(0,0,0,0.4)",
-          }}
-        >
-          <Icon
-            className={cn(
-              "transition-colors duration-300",
-              hovered ? "text-apex-bright" : "text-[#b0b0c8]"
-            )}
-            style={{ width: iconSize, height: iconSize }}
-          />
-        </div>
+      <div
+        className={cn(
+          "flex flex-col items-center rounded-2xl border px-5 backdrop-blur-xl transition-[border-color,box-shadow,padding] duration-500 ease-out",
+          hovered ? "border-white/[0.1] py-4" : "border-white/[0.06] py-3.5"
+        )}
+        style={{
+          background: "linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)",
+          boxShadow: hovered
+            ? "inset 0 1px 0 rgba(255,255,255,0.1), inset 0 0 24px rgba(124,58,237,0.08), 0 4px 32px rgba(124,58,237,0.15), 0 0 0 1px rgba(168,85,247,0.08)"
+            : "inset 0 1px 0 rgba(255,255,255,0.08), inset 0 0 20px rgba(124,58,237,0.04), 0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03)",
+          width: hovered ? 180 : undefined,
+          transition: "border-color 0.5s, box-shadow 0.5s, padding 0.5s, width 0.5s",
+        }}
+      >
+        <Icon
+          className="shrink-0 text-apex-bright"
+          style={{ width: 32, height: 32 }}
+        />
         <span
           className={cn(
-            "mt-2 whitespace-nowrap text-xs font-semibold tracking-wide transition-colors duration-300",
-            hovered ? "text-white" : "text-[#a0a0b8]"
+            "mt-2 whitespace-nowrap text-sm font-medium tracking-wide transition-colors duration-500",
+            hovered ? "text-white" : "text-apex-bright"
           )}
         >
           {node.data.label}
         </span>
-
-        {/* Expanded info on hover */}
-        <AnimatePresence>
-          {hovered && (
-            <motion.div
-              initial={{ opacity: 0, height: 0, y: -4 }}
-              animate={{ opacity: 1, height: "auto", y: 0 }}
-              exit={{ opacity: 0, height: 0, y: -4 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="overflow-hidden"
-            >
-              <div
-                className="mt-2 rounded-xl border border-apex-accent/25 px-4 py-3 backdrop-blur-2xl"
-                style={{
-                  background: "rgba(8,8,18,0.95)",
-                  boxShadow:
-                    "0 0 30px rgba(124,58,237,0.25), 0 0 60px rgba(124,58,237,0.08)",
-                  maxWidth: 200,
-                }}
-              >
-                <p className="text-[11px] leading-relaxed text-[#a0a0b8]">
-                  {node.data.description}
-                </p>
-              </div>
-            </motion.div>
+        <p
+          className={cn(
+            "overflow-hidden text-center text-[11px] leading-relaxed text-white/50 transition-[max-height,opacity,margin,width] duration-500 ease-out",
+            hovered ? "mt-2 w-[150px] max-h-20 opacity-100" : "w-0 max-h-0 opacity-0"
           )}
-        </AnimatePresence>
+        >
+          {node.data.description}
+        </p>
       </div>
     </div>
   );

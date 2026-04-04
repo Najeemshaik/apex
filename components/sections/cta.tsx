@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { GlowOrb } from "@/components/glow-orb";
 import { SectionWrapper } from "@/components/section-wrapper";
 import { CTA_COPY } from "@/lib/constants";
@@ -17,6 +18,14 @@ export function CTA() {
 
   return (
     <section id="cta" className="relative py-[var(--section-gap)]">
+      {/* Bright accent gradient */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 50%, rgba(124,58,237,0.18) 0%, rgba(168,85,247,0.05) 40%, transparent 70%)",
+        }}
+      />
       <GlowOrb
         size="1000px"
         opacity={0.15}
@@ -25,36 +34,46 @@ export function CTA() {
 
       <div className="relative mx-auto max-w-2xl px-6 text-center md:px-10">
         <SectionWrapper>
-          <h2 className="font-display text-[clamp(2rem,5vw,4rem)] font-bold tracking-[-0.03em] text-text-primary">
+          <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-[-0.03em] text-white">
             {CTA_COPY.headline}
           </h2>
-          <p className="mt-6 text-lg leading-relaxed text-text-secondary">
+          <p className="mt-6 text-base leading-relaxed text-text-secondary md:text-lg">
             {CTA_COPY.subhead}
           </p>
 
           {submitted ? (
-            <div className="mt-14">
+            <div className="mt-12">
               <p className="text-xl font-medium text-apex-bright">
                 {CTA_COPY.successMessage}
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="mt-14 flex flex-col gap-4 sm:flex-row">
-              <input
-                type="email"
-                required
-                placeholder="you@company.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-14 flex-1 rounded-xl border border-border-glass bg-bg-glass px-5 text-base text-text-primary backdrop-blur-xl transition-all duration-300 placeholder:text-text-tertiary focus:border-apex-accent/40 focus:shadow-[0_0_30px_oklch(70%_0.25_300_/_0.2)] focus:ring-2 focus:ring-apex-accent/30 focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="animate-glow-pulse h-14 shrink-0 rounded-xl border border-apex-accent/30 bg-bg-glass px-10 text-base font-medium text-apex-bright backdrop-blur-xl transition-all duration-300 hover:border-apex-accent/50 hover:shadow-[0_0_60px_oklch(70%_0.25_300_/_0.4)]"
+            <>
+              <form
+                onSubmit={handleSubmit}
+                className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center"
               >
-                {CTA_COPY.button}
-              </button>
-            </form>
+                <input
+                  type="email"
+                  required
+                  placeholder="you@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-12 flex-1 rounded-full border border-white/[0.1] bg-white/[0.04] px-6 text-sm text-white backdrop-blur-xl transition-all duration-300 placeholder:text-text-tertiary focus:border-apex-accent/40 focus:shadow-[0_0_30px_rgba(124,58,237,0.15)] focus:ring-2 focus:ring-apex-accent/20 focus:outline-none sm:max-w-sm"
+                />
+                <button type="submit" className="btn-primary group">
+                  {CTA_COPY.primaryCta}
+                  <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                </button>
+              </form>
+
+              <div className="mt-6 flex items-center justify-center gap-4">
+                <a href="#" className="btn-secondary group text-sm">
+                  {CTA_COPY.secondaryCta}
+                  <ArrowRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+                </a>
+              </div>
+            </>
           )}
         </SectionWrapper>
       </div>

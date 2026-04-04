@@ -1,8 +1,9 @@
 import { Navigation } from "@/components/navigation";
 import { Hero } from "@/components/sections/hero";
 import { Features } from "@/components/sections/features";
-import { WhatIf } from "@/components/sections/what-if";
-import { Testimonial } from "@/components/sections/testimonial";
+import { Architecture } from "@/components/sections/architecture";
+import { WhyChoose } from "@/components/sections/why-choose";
+
 import { CTA } from "@/components/sections/cta";
 import { Footer } from "@/components/sections/footer";
 
@@ -13,8 +14,9 @@ export default function Home() {
       <main>
         <Hero />
         <Features />
-        <WhatIf />
-        <Testimonial />
+        <Architecture />
+        <WhyChoose />
+
         <CTA />
       </main>
       <Footer />

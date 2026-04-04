@@ -16,10 +16,9 @@ export function GlassCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-border-glass bg-bg-glass backdrop-blur-xl",
-        "border-t border-t-white/[0.08]",
+        "glass-card",
         hover &&
-          "transition-all duration-500 hover:border-apex-accent/20 hover:shadow-[0_0_60px_oklch(70%_0.25_300_/_0.15)]",
+          "transition-all duration-500 hover:border-apex-accent/20 hover:shadow-[0_0_40px_rgba(124,58,237,0.1)]",
         glow && "glow-box-subtle",
         className
       )}

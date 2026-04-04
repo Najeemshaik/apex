@@ -25,27 +25,27 @@ export default function RootLayout({
       lang="en"
       className="dark"
     >
-      <body className="relative min-h-screen overflow-x-hidden">
+      <body className="relative min-h-screen overflow-x-hidden bg-black">
         {/* Noise overlay */}
         <div className="noise-overlay fixed inset-0 z-50 h-full w-full" />
 
-        {/* Atmospheric glow orbs */}
+        {/* Atmospheric glow orbs — very subtle */}
         <div
-          className="pointer-events-none fixed -left-[200px] -top-[200px] h-[600px] w-[600px] animate-slow-drift rounded-full opacity-[0.06]"
+          className="pointer-events-none fixed -left-[300px] -top-[200px] h-[800px] w-[800px] animate-slow-drift rounded-full opacity-[0.04]"
           style={{
             background:
               "radial-gradient(circle, #7C3AED 0%, transparent 70%)",
           }}
         />
         <div
-          className="pointer-events-none fixed -right-[150px] top-[40%] h-[500px] w-[500px] rounded-full opacity-[0.04]"
+          className="pointer-events-none fixed -right-[200px] top-[50%] h-[600px] w-[600px] rounded-full opacity-[0.03]"
           style={{
             background:
               "radial-gradient(circle, #A855F7 0%, transparent 70%)",
           }}
         />
         <div
-          className="pointer-events-none fixed -bottom-[100px] left-[30%] h-[700px] w-[700px] animate-slow-drift rounded-full opacity-[0.05]"
+          className="pointer-events-none fixed -bottom-[200px] left-[40%] h-[700px] w-[700px] animate-slow-drift rounded-full opacity-[0.03]"
           style={{
             background:
               "radial-gradient(circle, #7C3AED 0%, transparent 70%)",
